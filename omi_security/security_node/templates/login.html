@@ -38,6 +38,7 @@
 						<input id="id_password" class="form-control" name="password" type="password" required />
 					</div>
                     <span class="help-block">{{form.non_field_errors.0}}</span>
+					<input type="hidden" name="next" value="{{ next }}" />
 
 					<button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
 				</form>

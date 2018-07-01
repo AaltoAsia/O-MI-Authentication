@@ -6,8 +6,9 @@ Basic configuration
 -------
 
 1. Setup authentication settings in `omi_security/omi_security/settings.py`
-2. Install O-MI Node compiled from `feature_authapiv2` branch in O-MI Node (It will be released in near-future release)
-2. In O-MI Node `/etc/o-mi-node/application.conf`, set `omi-service.authAPI.v2.authentication-url` and set parameters objects as below:
+2. JWT token expiry is configurable in `omi_security/security_node/views.py`
+3. Install O-MI Node compiled from `feature_authapiv2` branch in O-MI Node (It will be released in near-future release)
+4. In O-MI Node `/etc/o-mi-node/application.conf`, set `omi-service.authAPI.v2.authentication-url` and set parameters objects as below:
 
 ```
 # This example is at root level, outside of any objects
@@ -71,7 +72,9 @@ Initial dependencies
 
 1. Install python and pip: `sudo apt-get install python3 python3-pip`
 2. Install other dependencies: `sudo apt-get install libsasl2-dev python-dev libldap2-dev libssl-dev python-ldap django-auth-ldap`
-1. Install python library: `pip3 install -r requirements.txt`
+3. Install python library: `pip3 install -r requirements.txt`
+4. Install Oauth2 provider: `pip3 install django-oauth-toolkit` and sync the database: `python3 manage.py migrate oauth2_provider`
+5. To use Heroku deployed consumer app for testing, install: `pip3 install django-cors-middleware` and to register the app use: `http://localhost:8000/o/applications/`
 
 
 To configure NGINX as proxy, use the following method
