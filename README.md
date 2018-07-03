@@ -51,17 +51,27 @@ omi-service.authAPI.v2 {
       # authorizationHeader {}
       # headers {}
       # jsonbody {}
-    }
-    # extract parameters from Authentication response
-    parameters.fromAuthentication {
-      # same as above + jsonbody property search
-      jsonbody {
-        # searchWord = variableName
-        email = "username"
-        #isAdmin = "isadmin"
-      }
-
   }
+  # extract parameters from Authentication response
+  parameters.fromAuthentication {
+    # same as above + jsonbody property search
+    jsonbody {
+      # searchWord = variableName
+      email = "username"
+      #isAdmin = "isadmin"
+    }
+  }
+  
+  # To make read requests to work without authenticated user and to get default permissions from authorization module:
+  # we can skip authentication (othewise it will fail which will result in unauthorized error).
+  # This should contain all variables that are used for authentication. Skip will happen if they all are empty.
+  parameters.skipAuthenticationOnEmpty = ["token"]
+
+  # and send empty username to authorization (authorization module should support sending of default permissions for empty username)
+  parameters.initial {
+    username = "" # to send empty username if username is not given by authentication
+  }
+  
 }
 ```
 
