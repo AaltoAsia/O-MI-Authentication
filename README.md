@@ -16,6 +16,7 @@ omi-service.authAPI.v2 {
 
   # Url to do authentication (checking if the consumer have valid credentials or session)
   authentication.url = "http://localhost:8000/omi_authquery"
+  authentication.method = "GET"
 
   # Url to do authorization (checking what data a given user has permissions to read or write)
   #authorization.url = "<put authorization module url here>"
@@ -42,7 +43,7 @@ omi-service.authAPI.v2 {
       #  token = "token" # uncomment this if uri query parameter "token" should be allowed
       #}
   }
-  # put variables into authentication request (http GET)
+  # put variables into authentication request
   parameters.toAuthentication {
       query {
         # parameterName = variableName  
