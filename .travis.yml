@@ -1,5 +1,8 @@
 language: python
 python:
-  - "3.6"
+- '3.6'
 script:
-  - python omi_security/manage.py test  
+- python omi_security/manage.py test
+notifications:
+  slack:
+    secure: pWXldQbBz1FLPrXsTI/3XOqDSMndlh7KXNQg0my/dC0ueNYqflrCcrXK1+t6tJAeJb3syRd16NiYKSDzbO5icdHAtUv+SijFNaGUNIMXEpvDn6krV6aK4WF386BNy42OEe0EYx2hNAsDqVyKX7X9MZJb/34T6pf5S2E9Isgy/q25oAZedZztL6RmDdb9ddYwxoOTCujO7bCN+gOZblaIKCBUE9uoWr+rewVM7a14x8uQP2n745VrWi++Xm1rEkTm4qmuZobeODUXFYfpFkX8b8CcJAfFMqfVbIr25WwtEIOL+Yp+lCFOKGJ+7CBsTqzgTf99ljfrmucA3FRS+Ak3r9rcjpQTcBNkBWoA55WOLPVBVL1At9QtfVnFmiGJXrrIDXLVe8tD1WLnZ3STPFxOJrQbQ/T+69YSzmR5yUkMZwPsCqRKjbu6Qtqrv60Waj2DobZz+D0R5S9qqkbsWbhEb6usLCNTMMjor+VpJp62m57NSc8+2uSx5sW+00Ou/DYCdRlDhcgSXVnPGdT1YiSv4nVq+bocSnQi4Je5f8BEV90+M1htC5lyWoIiGhbupbZCiXrBljV8vkHYSXvPoqVmlW3QF2jfsvpgmBhCV+gTUhivk+JyQgPittK3+wGQFzn/rtGNRBoXZDBjuqVPk+CLJ8QR+0X+mt/fv9whHWCl9Rk=
