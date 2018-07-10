@@ -71,7 +71,8 @@ Initial dependencies
 
 1. Install python and pip: `sudo apt-get install python3 python3-pip`
 2. Install other dependencies: `sudo apt-get install libsasl2-dev python-dev libldap2-dev libssl-dev python-ldap django-auth-ldap`
-1. Install python library: `pip3 install -r requirements.txt`
+3. Install python library: `pip3 install -r requirements.txt`
+4. To create admin: `python3 manage.py createsuperuser`
 
 
 To configure NGINX as proxy, use the following method

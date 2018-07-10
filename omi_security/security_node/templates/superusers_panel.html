@@ -3,11 +3,13 @@
 {% block content %}
 
 
+
 <div class="container">
 
 
     <div class="omb_login">
-    	        <h3 class="omb_authTitle"><a href="{% url 'login' %}">Login</a> or Sign Up</h3>
+    	        <h2 class="omb_authTitle">Admin Panel</h2>
+                <h3 align="center"><font color="orange">To Add New Superuser</font></h3>
 		<div class="row omb_row-sm-offset-3 omb_socialButtons">
 
 		</div>
@@ -63,39 +65,19 @@
 					</div>
                     <span class="help-block">{{form.errors.password1}}</span>
 
-<!--
+
                   	<div class="input-group">
 						<span class="input-group-addon"><i class="fa fa-address-card-o"></i> Check if Superuser</span>
-                        <input autofocus="" class="form-control" id="id_is_superuser" name="is_superuser" type="checkbox" onclick="myFunction()" {% if form.is_superuser.value %} value="{{form.is_superuser.value}}" {% endif %} />
+                        <input autofocus="" class="form-control" id="id_is_superuser" name="is_superuser" type="checkbox"  {% if form.is_superuser.value %} value="{{form.is_superuser.value}}" {% endif %} />
 					</div>
-
-
-					<span class="help-block"></span>
-
-                    <div id="myDIV" class="input-group" style="display: none;">
-						<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                      <input class="form-control" id="id_superuser_secret" maxlength="32" minlength="6" name="superuser_secret" type="text" placeholder="Superuser Secret"/>
-					</div>
-                    <script>
-                    function myFunction() {
-
-                         var x = document.getElementById("myDIV");
-                        if(x.style.display=='none'){
-                            x.style.display='block';
-                        } else {
-                            x.style.display='none';
-                           }
-                    }
-
-                    </script>
 
                     <span class="help-block">{{form.non_field_errors.0}}</span>
-                    -->
 
-					<button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
+					<button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up Superuser</button>
 				</form>
 			</div>
     	</div>
+
 		<div class="row omb_row-sm-offset-3">
 			<div class="col-xs-12 col-sm-3">
 				<label class="checkbox">
@@ -105,16 +87,76 @@
 		</div>
 	</div>
 
+<h3 align="center" style="margin-top:50px;"><font color="orange">To Modify Existing User Roles</font></h3>
+<table border="1" align="center">
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Username</th>
+        <th>Is_superuser</th>
+        <th>Change Status</th>
+    </tr>
+
+    {% for user in list_users %}
+    <tr>
+        <td>{{ user.first_name }}</td>
+        <td>{{ user.last_name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.is_superuser }}</td>
+        {% if user.is_superuser %}
+            <td><form method="post" action="/userRole/{{user.id}}/">
+                 {% csrf_token %}
+                <input type="hidden" name="user_superuser" value="superuser">
+                <input type="submit" value="Downgrade to normal user"></form></td>
+
+        {% else %}
+             <td><form method="post" action="/userRole/{{user.id}}/">
+                  {% csrf_token %}
+                 <input type="hidden" name="user_superuser" value="normaluser">
+                 <input type="submit" value="Upgrade to super user"></form></td>
+
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+
+
 
 </div>
+
+
 
 
 {% endblock %}
 
 
+<!--
+<table>
 
+    <tr>
+        <th>Username</th>
+        <th>is_superuser</th>
+        <th>Enable/disable Superuser</th>
+    </tr>
 
+    <tbody>
+    {% for user in list_users %}
+    <tr>
+        <td>{{ user.username }}</td>
+        {% if user.is_superuser %}
+        <td>$ {{ user.is_superuser }}</td>
+        {% else %}
+        <td></td>
+        {% endif %}
+        <td><a href="url:userRole" user.id>Modify User</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+              </table>
 
+-->
 
 
 
@@ -127,3 +169,16 @@
     {{ form }}
     <input type="submit" value="Sign Up" />
 </form>
+
+
+
+
+
+
+
+
+
+
+
+
+

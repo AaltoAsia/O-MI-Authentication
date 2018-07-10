@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from security_node.models import Group, User_Group_Relation, Rule
 from django.contrib.auth.models import User
-from security_node.form import UserForm, GroupForm
+from security_node.form import UserForm, GroupForm, SuperuserForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
@@ -171,6 +171,41 @@ def omi_authquery(request):
     reply = {'email': user.email, 'isAdmin':user.is_superuser}                           #making json response: user email address, user exists status, his admin status
     return JsonResponse(reply)
     #{'allow': [<paths>], 'deny': [<paths>], 'isAdmin': true|false}
+
+
+@login_required
+@csrf_protect
+def superusers_panel(request):
+
+    if not token_validator(request):
+        return redirect('logout')
+
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            form = SuperuserForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('home')
+        else:
+            form = SuperuserForm()
+        users = User.objects.all()
+        return render(request, 'superusers_panel.html', {'form': form, "list_users": users})
+    else:
+        return redirect('home')
+
+
+@login_required
+@csrf_protect
+def userRole(request, user_id):
+
+    if not token_validator(request):
+        return redirect('logout')
+
+    user = User.objects.get(id=user_id)
+    modify_user = request.POST.get('user_superuser')
+    user.is_superuser = False if modify_user == "superuser" else True
+    user.save()
+    return redirect('superusers_panel')
 
 
 
