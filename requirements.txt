@@ -1,4 +1,4 @@
-django==2.0.8
+django==2.0.10
 social-auth-app-django==2.1.0
 PyJWT==1.6.1
 python-ldap==3.1.0
