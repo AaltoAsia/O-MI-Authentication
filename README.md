@@ -228,6 +228,10 @@ python3 manage.py runserver 0:8000
 _Note:_ When you enter username and password of the user from Openldap directory, the user will be logged in and is added into the User table of Django (if not already exists).
 
 
+Acknowledgements
+---------------
+
+Sections of this project has been developed as part of the [bIoTope Project](www.bIoTope-project.eu), which has received funding from the European Union’s Horizon 2020 Research and Innovation Programme under grant agreement No. 688203.
 
 
 
