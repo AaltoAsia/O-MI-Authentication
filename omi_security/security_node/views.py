@@ -10,13 +10,63 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
+from oauth2_provider.views.generic import ProtectedResourceView
+from oauthlib.oauth2 import RequestValidator
 import json
 import jwt
 import time
 
 TOKEN_EXPIRY = 900  # Unit is seconds so it makes 15minutes
 
+class ApiEndpoint(ProtectedResourceView):
+	def get(self, request, *args, **kwargs):
+    		if request.user.is_authenticated:
+        		return HttpResponse(
+            		'Hello there! You are acting on behalf of "%s"\n'
+            		% (request.user))
+    		else:
+        		return HttpResponse('Hello! I do not recognize you\n')
+#OAuth2 Class Validator for validating access token 
+class OAuth2Validator(RequestValidator):
+    def validate_bearer_token(self, token, scopes, request):
+        """
+        When users try to access resources, check that provided token is valid
+        """
+        if not token:
+            return False
 
+        introspection_url = oauth2_settings.RESOURCE_SERVER_INTROSPECTION_URL
+        introspection_token = oauth2_settings.RESOURCE_SERVER_AUTH_TOKEN
+        introspection_credentials = oauth2_settings.RESOURCE_SERVER_INTROSPECTION_CREDENTIALS
+
+        try:
+            access_token = AccessToken.objects.select_related("application", "user").get(token=token)
+        except AccessToken.DoesNotExist:
+            access_token = None
+
+        # if there is no token or it's invalid then introspect the token if there's an external OAuth server
+        if not access_token or not access_token.is_valid(scopes):
+            if introspection_url and (introspection_token or introspection_credentials):
+                access_token = self._get_token_from_authentication_server(
+                    token,
+                    introspection_url,
+                    introspection_token,
+                    introspection_credentials
+                )
+
+        if access_token and access_token.is_valid(scopes):
+            request.client = access_token.application
+            request.user = access_token.user
+            request.scopes = scopes
+
+            # this is needed by django rest framework
+            request.access_token = access_token
+            return True
+        else:
+            self._set_oauth2_error_on_request(request, access_token, scopes)
+            return False
+
+#for validating JWT tokens
 def token_validator(request):
     token = request.COOKIES.get('token')
     try:
@@ -149,6 +199,7 @@ def omi_authquery(request):
 
     email = request.GET.get('email')
     token = request.GET.get('token')
+    #oauth = self.get_validator_class().validate_bearer_token(token, scopes, request)	 
     if not token: token = request.GET.get('access_token')
 
     if token:
@@ -165,9 +216,21 @@ def omi_authquery(request):
         except:
             reply = json.dumps({'message': 'No User Exist with this email address'})
             return HttpResponse(reply)
+    """elif oauth:
+        try:
+            reply = json.dumps({'message': 'No User Exist with this email address'})
+            return HttpResponse(reply)   	
+        except:
+            reply = json.dumps({'message': 'No User Exist with this email address'})
+            return HttpResponse(reply)"""
     reply = {'email': user.email, 'isAdmin': user.is_superuser}
     return JsonResponse(reply)
+   
 
+
+@login_required()
+def secret_page(request, *args, **kwargs):
+    return HttpResponse('Secret contents!', status=200)
 
 @login_required
 @csrf_protect
