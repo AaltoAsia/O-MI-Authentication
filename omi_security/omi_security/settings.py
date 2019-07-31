@@ -84,6 +84,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social_django',
+    'oauth2_provider',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -95,6 +97,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+#    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
 ]
 
 ROOT_URLCONF = 'omi_security.urls'
@@ -174,15 +179,16 @@ STATICFILES_DIRS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-
+    'oauth2_provider.backends.OAuth2Backend',
     'social_core.backends.facebook.FacebookOAuth2',
     'django_auth_ldap.backend.LDAPBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend',    
 )
 
 SOCIAL_AUTH_FACEBOOK_KEY = '<your_apps_client_id>'  # App ID
 SOCIAL_AUTH_FACEBOOK_SECRET = '<your_apps_client_secret>'  # App Secret
 
+CORS_ORIGIN_ALLOW_ALL = True
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
