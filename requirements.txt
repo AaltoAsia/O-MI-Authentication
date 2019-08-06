@@ -3,3 +3,7 @@ social-auth-app-django==2.1.0
 PyJWT==1.6.1
 python-ldap==3.1.0
 django-auth-ldap==1.5.0
+ipython
+django-allauth==0.36.0
+django-oauth-toolkit
+django-cors-middleware
