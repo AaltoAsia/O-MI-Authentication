@@ -10,6 +10,8 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
+from oauth2_provider.views.generic import ProtectedResourceView
+from oauthlib.oauth2 import RequestValidator
 import json
 import jwt
 import time
@@ -17,6 +19,22 @@ import time
 TOKEN_EXPIRY = 900  # Unit is seconds so it makes 15minutes
 
 
+
+class ApiEndpoint(ProtectedResourceView):
+	def get(self, request, *args, **kwargs):
+		#self.get_validator_class().validate_bearer_token(token, scopes, request)
+    		if self.get_validator_class().validate_bearer_token(self,token=request.GET.get('access_token'), scopes=None, request=request):       	
+		        reply = {'message': 'Validated'}
+        		return JsonResponse(reply, status=200)
+            else:       	
+		        reply = {'message': 'Not Validated'}
+        		return JsonResponse(reply, status=400)
+
+
+#OAuth2 Class Validator for validating access token 
+
+
+#for validating JWT tokens
 def token_validator(request):
     token = request.COOKIES.get('token')
     try:
@@ -149,6 +167,7 @@ def omi_authquery(request):
 
     email = request.GET.get('email')
     token = request.GET.get('token')
+    #oauth = self.get_validator_class().validate_bearer_token(token, scopes, request)	 
     if not token: token = request.GET.get('access_token')
 
     if token:
@@ -165,9 +184,15 @@ def omi_authquery(request):
         except:
             reply = json.dumps({'message': 'No User Exist with this email address'})
             return HttpResponse(reply)
+        
     reply = {'email': user.email, 'isAdmin': user.is_superuser}
     return JsonResponse(reply)
+   
 
+
+@login_required()
+def secret_page(request, *args, **kwargs):
+    return HttpResponse('Secret contents!', status=200)
 
 @login_required
 @csrf_protect
