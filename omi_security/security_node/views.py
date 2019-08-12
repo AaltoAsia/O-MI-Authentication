@@ -20,16 +20,17 @@ TOKEN_EXPIRY = 900  # Unit is seconds so it makes 15minutes
 
 
 
-class ApiEndpoint(ProtectedResourceView):
-	def get(self, request, *args, **kwargs):
-		#self.get_validator_class().validate_bearer_token(token, scopes, request)
-    		if self.get_validator_class().validate_bearer_token(self,token=request.GET.get('access_token'), scopes=None, request=request):       	
-		        reply = {'message': 'Validated'}
-        		return JsonResponse(reply, status=200)
-            else:       	
-		        reply = {'message': 'Not Validated'}
-        		return JsonResponse(reply, status=400)
+#class ApiEndpoint(ProtectedResourceView):
+#  def get(self, request, *args, **kwargs):
+#    #self.get_validator_class().validate_bearer_token(token, scopes, request)
+#        if self.get_validator_class().validate_bearer_token(self,token=request.GET.get('access_token'), scopes=None, request=request):
+#            reply = {'message': 'Validated'}
+#            return JsonResponse(reply, status=200)
+#        else:
+#            reply = {'message': 'Not Validated'}
+#            return JsonResponse(reply, status=400)
 
+protectedResourceView = ProtectedResourceView()
 
 #OAuth2 Class Validator for validating access token 
 
@@ -167,8 +168,9 @@ def omi_authquery(request):
 
     email = request.GET.get('email')
     token = request.GET.get('token')
-    #oauth = self.get_validator_class().validate_bearer_token(token, scopes, request)	 
     if not token: token = request.GET.get('access_token')
+
+    user = None
 
     if token:
         try:
@@ -176,8 +178,14 @@ def omi_authquery(request):
             decoded_email = decoded_token['email']
             user = User.objects.get(email=decoded_email)
         except:
-            reply = {'message': 'Invalid Token or No user Exists'}
-            return JsonResponse(reply, status=400)
+            try:
+                if protectedResourceView.get_validator_class().validate_bearer_token(token=token, scopes=None, request=request):
+                    user = request.user
+                    print(user)
+                    print(user.__dir__())
+            except:
+                reply = {'message': 'Invalid Token or No user Exists'}
+                return JsonResponse(reply, status=400)
     elif email:
         try:
             user = User.objects.get(email=email)
